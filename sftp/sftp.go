@@ -26,18 +26,6 @@ func main() {
 	app.Version = "v1.0.0"
 	// 指定命令运行的函数
 	app.Commands = []*cli.Command{
-		Sftp,
-	}
-	// 启动cli
-	if err := app.Run(os.Args); err != nil {
-		log.Fatalf("Failed to start application: %v", err)
-	}
-}
-
-// Sftp 创建配置文件
-var Sftp = &cli.Command{
-	Name: "sftp",
-	Subcommands: []*cli.Command{
 		{
 			Name: "push",
 			Flags: []cli.Flag{
@@ -68,7 +56,11 @@ var Sftp = &cli.Command{
 			Usage:  "sftp pull --src [src path] --dst [dst path]",
 			Action: pull,
 		},
-	},
+	}
+	// 启动cli
+	if err := app.Run(os.Args); err != nil {
+		log.Fatalf("Failed to start application: %v", err)
+	}
 }
 
 func connect(user, password, host string, port int) (*sftp.Client, error) {
@@ -204,7 +196,6 @@ func pull(c *cli.Context) error {
 	dst := c.String("dst")
 	reg := regexp.MustCompile("^(.+?):(.+)@(.+?)(/.*)")
 	res := reg.FindStringSubmatch(src)
-	fmt.Printf("%#v\n", res)
 	if len(res) != 5 {
 		return fmt.Errorf("参数错误")
 	}
